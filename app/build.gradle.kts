@@ -59,4 +59,5 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.converter.moshi)
     implementation(libs.room.runtime)
+    implementation(libs.bumptech.glide)
 }
