@@ -6,5 +6,5 @@ data class LikeRequest (
     @property:Json("post_id")
     val postId: String,
     @property:Json("like")
-    val like: Boolean
+    val isLiked: Boolean
 )

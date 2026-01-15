@@ -1,8 +1,12 @@
 package com.example.myinsta.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
+@Entity(tableName = "posts")
 data class Post (
+    @PrimaryKey
     @property:Json(name = "post_id")
     val postId: String,
     @property:Json(name = "user_name")
@@ -15,4 +19,9 @@ data class Post (
     val likeCount: Int,
     @property:Json(name="liked_by_user")
     val likedByUser: Boolean
+)
+
+data class FeedResponse (
+    @property:Json("feed")
+    val feed : List<Post>
 )
