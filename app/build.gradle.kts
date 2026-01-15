@@ -61,4 +61,5 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.bumptech.glide)
+    implementation(libs.circleimageview)
 }
