@@ -16,9 +16,9 @@ data class Post (
     @property:Json(name="post_image")
     val postImage: String,
     @property:Json(name="like_count")
-    val likeCount: Int,
+    var likeCount: Int,
     @property:Json(name="liked_by_user")
-    val likedByUser: Boolean
+    var likedByUser: Boolean
 )
 
 data class FeedResponse (

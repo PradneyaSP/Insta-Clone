@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.myinsta.model.Post
 
-@Database(entities = [Post::class], version = 1)
+@Database(entities = [Post::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao
 
@@ -18,7 +18,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val db = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java, "myinsta_database"
-                ).build()
+                ).allowMainThreadQueries().build()
                 INSTANCE = db
                 db
             }

@@ -1,10 +1,12 @@
 package com.example.myinsta.data
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.myinsta.model.Post
 
+@Dao
 interface PostDao {
     @Query("SELECT * FROM posts")
     fun getAllPosts(): List<Post>
