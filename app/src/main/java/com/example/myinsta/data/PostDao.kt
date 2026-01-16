@@ -9,11 +9,11 @@ import com.example.myinsta.model.Post
 @Dao
 interface PostDao {
     @Query("SELECT * FROM posts")
-    fun getAllPosts(): List<Post>
+    suspend fun getAllPosts(): List<Post>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun updateAllPosts(newPosts: List<Post>)
+    suspend fun updateAllPosts(newPosts: List<Post>)
 
-    @Query("UPDATE posts SET likedByUser = :isLiked AND likeCount = :newCount WHERE postId = :postId")
-    fun updateLikeStatus(postId: String, isLiked: Boolean , newCount: Int)
+    @Query("UPDATE posts SET likedByUser = :isLiked, likeCount = :newCount WHERE postId = :postId")
+    suspend fun updateLikeStatus(postId: String, isLiked: Boolean , newCount: Int)
 }
