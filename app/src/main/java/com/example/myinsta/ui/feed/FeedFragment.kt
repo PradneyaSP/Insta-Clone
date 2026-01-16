@@ -20,11 +20,14 @@ class FeedFragment: Fragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
+    private lateinit var adapter: FeedAdapter
+    private lateinit var repository: PostRepository
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,15 +35,48 @@ class FeedFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize repository
         val apiService = RetrofitInstance.api
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val repository = PostRepository(apiService, postDao)
+        repository = PostRepository(apiService, postDao)
+
+        // Create adapter with empty list - will be updated when data loads
+        adapter = FeedAdapter(mutableListOf(), repository, lifecycleScope)
+        
+        // Setup RecyclerView outside coroutine
+        binding.rvFeed.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvFeed.adapter = adapter
+
+        // Load data in coroutine
+        loadFeed()
+    }
+
+    private fun loadFeed() {
+        // Show loading indicator
+        binding.progressBar.visibility = View.VISIBLE
+        binding.rvFeed.visibility = View.GONE
+        binding.tvError.visibility = View.GONE
 
         lifecycleScope.launch {
-            val feed = repository.getPosts()
-            val adapter = FeedAdapter(feed, repository)
-            binding.rvFeed.layoutManager = LinearLayoutManager(requireContext())
-            binding.rvFeed.adapter = adapter
+            try {
+                val feed = repository.getPosts()
+                
+                // Update adapter with new data
+                adapter.posts.clear()
+                adapter.posts.addAll(feed)
+                adapter.notifyItemRangeInserted(0, feed.size)
+                
+                // Show RecyclerView, hide loading
+                binding.progressBar.visibility = View.GONE
+                binding.rvFeed.visibility = View.VISIBLE
+                binding.tvError.visibility = View.GONE
+                
+            } catch (e: Exception) {
+                // Show error message, hide loading and RecyclerView
+                binding.progressBar.visibility = View.GONE
+                binding.rvFeed.visibility = View.GONE
+                binding.tvError.visibility = View.VISIBLE
+            }
         }
     }
 
