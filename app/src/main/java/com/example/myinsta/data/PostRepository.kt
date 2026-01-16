@@ -25,8 +25,11 @@ class PostRepository (
         postDao.updateLikeStatus(post.postId, post.likedByUser, post.likeCount)
 
         try {
-            val likeRequest = LikeRequest(post.postId, post.likedByUser)
-            apiService.likePost(likeRequest)
+            val request = LikeRequest(post.postId, post.likedByUser)
+            if(post.likedByUser)
+                apiService.likePost(request)
+            else
+                apiService.dislikePost(request)
         } catch(e: Exception){
             Log.d("Network Error" , "Like Post API Error")
         }

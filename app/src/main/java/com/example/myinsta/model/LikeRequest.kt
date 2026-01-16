@@ -1,4 +1,4 @@
-package com.example.myinsta.model;
+package com.example.myinsta.model
 
 import com.squareup.moshi.Json
 
