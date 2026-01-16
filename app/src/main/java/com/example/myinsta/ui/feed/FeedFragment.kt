@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myinsta.R
@@ -12,7 +14,6 @@ import com.example.myinsta.api.RetrofitInstance
 import com.example.myinsta.data.AppDatabase
 import com.example.myinsta.data.PostRepository
 import com.example.myinsta.databinding.FragmentFeedBinding
-import kotlinx.coroutines.launch
 
 class FeedFragment: Fragment() {
 
@@ -20,8 +21,8 @@ class FeedFragment: Fragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
+    private lateinit var viewModel: FeedViewModel
     private lateinit var adapter: FeedAdapter
-    private lateinit var repository: PostRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,44 +39,55 @@ class FeedFragment: Fragment() {
         // Initialize repository
         val apiService = RetrofitInstance.api
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        repository = PostRepository(apiService, postDao)
+        val repository = PostRepository(apiService, postDao)
+
+        val factory  = FeedViewModelFactory(repository)
+        viewModel = ViewModelProvider(this , factory)[FeedViewModel::class.java]
 
         // Create adapter with empty list - will be updated when data loads
-        adapter = FeedAdapter(mutableListOf(), repository, lifecycleScope)
+        adapter = FeedAdapter(mutableListOf(), repository, lifecycleScope, viewModel)
         
-        // Setup RecyclerView outside coroutine
+        // Setup RecyclerView
         binding.rvFeed.layoutManager = LinearLayoutManager(requireContext())
         binding.rvFeed.adapter = adapter
 
-        // Load data in coroutine
-        loadFeed()
+        // Observe the Data
+        setupObservers()
+
+        if (viewModel.feed.value.isNullOrEmpty()) {
+            viewModel.loadFeed()
+        }
     }
 
-    private fun loadFeed() {
-        // Show loading indicator
-        binding.progressBar.visibility = View.VISIBLE
-        binding.rvFeed.visibility = View.GONE
-        binding.tvError.visibility = View.GONE
-
-        lifecycleScope.launch {
-            try {
-                val feed = repository.getPosts()
-                
-                // Update adapter with new data
+    private fun setupObservers(){
+        viewModel.feed.observe(viewLifecycleOwner) { feed ->
+            feed?.let {
                 adapter.posts.clear()
-                adapter.posts.addAll(feed)
-                adapter.notifyItemRangeInserted(0, feed.size)
-                
-                // Show RecyclerView, hide loading
+                adapter.posts.addAll(it)
+                adapter.notifyDataSetChanged()
+                binding.rvFeed.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+            }
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if(isLoading) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.rvFeed.visibility = View.GONE
+                binding.tvError.visibility = View.GONE
+            } else {
                 binding.progressBar.visibility = View.GONE
                 binding.rvFeed.visibility = View.VISIBLE
                 binding.tvError.visibility = View.GONE
-                
-            } catch (e: Exception) {
-                // Show error message, hide loading and RecyclerView
+            }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if(!error.isNullOrEmpty()) {
                 binding.progressBar.visibility = View.GONE
                 binding.rvFeed.visibility = View.GONE
                 binding.tvError.visibility = View.VISIBLE
+            } else {
+                binding.tvError.visibility = View.GONE
             }
         }
     }

@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 class FeedAdapter(
     val posts: MutableList<Post>,
     private val repository: PostRepository,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val viewModel: FeedViewModel
 ) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>(){
 
     inner class PostViewHolder(view: View) : RecyclerView.ViewHolder(view){
@@ -70,8 +71,7 @@ class FeedAdapter(
                 coroutineScope.launch {
                     repository.updateLikeStatus(updatedPost)
                 }
-                posts[position] = updatedPost
-                notifyItemChanged(position)
+                viewModel.toggleLikeStatus(updatedPost)
             }
         }
 
