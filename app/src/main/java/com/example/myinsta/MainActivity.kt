@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
         // Enables edge-to-edge layout rendering for this activity
         enableEdgeToEdge()
 
-        // Inflate layout using View Binding
-        binding = ActivityMainBinding.inflate(layoutInflater)
 
         // Access SharedPreferences to check if user is logged in
         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
@@ -35,6 +33,9 @@ class MainActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
             startActivity(intent)
         }
+
+        // Inflate layout using View Binding
+        binding = ActivityMainBinding.inflate(layoutInflater)
 
         // Set the content view to the root of the binding (activity_main layout)
         setContentView(binding.root)
