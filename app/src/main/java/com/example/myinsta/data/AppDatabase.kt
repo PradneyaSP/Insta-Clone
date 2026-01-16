@@ -18,7 +18,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val db = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java, "myinsta_database"
-                ).allowMainThreadQueries().build()
+                ).build()
                 INSTANCE = db
                 db
             }

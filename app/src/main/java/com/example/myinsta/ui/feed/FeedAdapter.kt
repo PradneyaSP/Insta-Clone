@@ -11,12 +11,14 @@ import com.bumptech.glide.Glide
 import com.example.myinsta.R
 import com.example.myinsta.data.PostRepository
 import com.example.myinsta.model.Post
-import java.util.Locale
 import java.util.Locale.getDefault
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class FeedAdapter(
-    private val posts: List<Post>,
-    private val repository: PostRepository
+    val posts: MutableList<Post>,
+    private val repository: PostRepository,
+    private val coroutineScope: CoroutineScope
 ) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>(){
 
     inner class PostViewHolder(view: View) : RecyclerView.ViewHolder(view){
@@ -51,23 +53,28 @@ class FeedAdapter(
                 }
             }
             tvUsername.text = username
-            tvLikeCount.text = "${currentPost.likeCount} likes"
-            btnLikeButton.setOnClickListener {
-                if(currentPost.likedByUser){
-                    currentPost.likedByUser = false
-                    currentPost.likeCount--;
-                }
-                else{
-                    currentPost.likeCount++;
-                    currentPost.likedByUser = true
-                }
 
+            tvLikeCount.text = "${currentPost.likeCount} likes"
+
+            if(currentPost.likedByUser)
+                btnLikeButton.setImageResource(R.drawable.ic_heart_filled_32)
+            else
+                btnLikeButton.setImageResource(R.drawable.ic_heart_32)
+
+            btnLikeButton.setOnClickListener {
+                val updatedPost = if(currentPost.likedByUser){
+                    currentPost.copy(likedByUser = false, likeCount = currentPost.likeCount-1)
+                } else{
+                    currentPost.copy(likedByUser = true, likeCount = currentPost.likeCount+1)
+                }
+                coroutineScope.launch {
+                    repository.updateLikeStatus(updatedPost)
+                }
+                posts[position] = updatedPost
                 notifyItemChanged(position)
             }
         }
-        if(currentPost.likedByUser){
-            holder.btnLikeButton.setImageResource(R.drawable.ic_heart_filled_32)
-        }
+
         Glide.with(holder.itemView).load(currentPost.userImage).into(holder.ivAvatar)
         Glide.with(holder.itemView).load(currentPost.postImage).into(holder.ivPostImage)
 
