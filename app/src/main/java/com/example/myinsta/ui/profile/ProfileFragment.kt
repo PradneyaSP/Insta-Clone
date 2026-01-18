@@ -36,8 +36,9 @@ class ProfileFragment: Fragment() {
                 putBoolean("isLoggedIn" , false)
             }
             val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            requireActivity().finish()
         }
     }
 }

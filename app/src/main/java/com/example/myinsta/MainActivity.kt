@@ -30,8 +30,9 @@ class MainActivity : AppCompatActivity() {
         if(!isLoggedIn){
             val intent = Intent(this, LoginActivity::class.java)
             // Clears past activities and prevents LoginActivity from being stored in history
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            finish()
         }
 
         // Inflate layout using View Binding

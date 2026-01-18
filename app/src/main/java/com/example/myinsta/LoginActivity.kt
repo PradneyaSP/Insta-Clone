@@ -25,8 +25,9 @@ class LoginActivity : AppCompatActivity() {
             if(email == "user@example.com" && password == "123456789"){
                 userPrefs.edit { putBoolean("isLoggedIn", true) }
                 val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
+                finish()
             }
             else {
                 Toast.makeText(this, "Incorrect Credentials", Toast.LENGTH_SHORT).show()
