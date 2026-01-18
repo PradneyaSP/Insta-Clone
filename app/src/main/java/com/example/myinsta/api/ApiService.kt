@@ -3,6 +3,7 @@ package com.example.myinsta.api
 import com.example.myinsta.model.FeedResponse
 import com.example.myinsta.model.LikeRequest
 import com.example.myinsta.model.LikeResponse
+import com.example.myinsta.model.ReelsResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -13,8 +14,11 @@ interface ApiService {
     suspend fun getFeed(): FeedResponse
 
     @POST("user/like")
-    suspend fun likePost(@Body likeRequest: LikeRequest): LikeResponse
+    suspend fun likePostOrReel(@Body likeRequest: LikeRequest): LikeResponse
 
     @DELETE("user/dislike")
-    suspend fun dislikePost(@Body dislikeRequest: LikeRequest): LikeResponse
+    suspend fun dislikePostOrReel(@Body dislikeRequest: LikeRequest): LikeResponse
+
+    @GET("user/reels")
+    suspend fun getReels() : ReelsResponse
 }

@@ -2,7 +2,7 @@ package com.example.myinsta.data
 
 import android.util.Log
 import com.example.myinsta.api.ApiService
-import com.example.myinsta.model.LikeRequest
+import com.example.myinsta.model.PostLikeRequest
 import com.example.myinsta.model.Post
 
 class PostRepository (
@@ -25,11 +25,11 @@ class PostRepository (
         postDao.updateLikeStatus(post.postId, post.likedByUser, post.likeCount)
 
         try {
-            val request = LikeRequest(post.postId, post.likedByUser)
+            val request = PostLikeRequest(post.postId, post.likedByUser)
             if(post.likedByUser)
-                apiService.likePost(request)
+                apiService.likePostOrReel(request)
             else
-                apiService.dislikePost(request)
+                apiService.dislikePostOrReel(request)
         } catch(e: Exception){
             Log.d("Network Error" , "Like Post API Error")
         }
