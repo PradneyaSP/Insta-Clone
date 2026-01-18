@@ -62,4 +62,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.bumptech.glide)
     implementation(libs.circleimageview)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+    implementation(libs.androidx.media3.ui)
 }
