@@ -6,22 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myinsta.R
-import com.example.myinsta.api.RetrofitInstance
-import com.example.myinsta.data.AppDatabase
 import com.example.myinsta.data.PostRepository
 import com.example.myinsta.databinding.FragmentFeedBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedFragment: Fragment() {
 
     private var _binding: FragmentFeedBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: FeedViewModel
+    // Field Injection
+    @Inject
+    lateinit var repository: PostRepository
+
+    private val viewModel: FeedViewModel by viewModels()
     private lateinit var adapter: FeedAdapter
 
     override fun onCreateView(
@@ -35,14 +38,6 @@ class FeedFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Initialize repository
-        val apiService = RetrofitInstance.api
-        val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val repository = PostRepository(apiService, postDao)
-
-        val factory  = FeedViewModelFactory(repository)
-        viewModel = ViewModelProvider(this , factory)[FeedViewModel::class.java]
 
         // Create adapter with empty list - will be updated when data loads
         adapter = FeedAdapter(mutableListOf(), repository, lifecycleScope, viewModel)
