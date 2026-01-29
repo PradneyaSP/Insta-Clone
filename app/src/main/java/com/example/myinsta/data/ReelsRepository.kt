@@ -4,8 +4,11 @@ import android.util.Log
 import com.example.myinsta.api.ApiService
 import com.example.myinsta.model.Reel
 import com.example.myinsta.model.ReelLikeRequest
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ReelsRepository(
+@Singleton
+class ReelsRepository @Inject constructor(
     private val api: ApiService,
     private val reelsDao: ReelDao
 ) {
