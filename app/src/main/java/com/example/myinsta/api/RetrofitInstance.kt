@@ -5,7 +5,7 @@ import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-
+@Deprecated("This method to use the api is deprecated. Use Hilt instead")
 object RetrofitInstance {
     private const val BASE_URL = "https://dfbf9976-22e3-4bb2-ae02-286dfd0d7c42.mock.pstmn.io/"
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
