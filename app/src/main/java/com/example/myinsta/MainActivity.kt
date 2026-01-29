@@ -9,7 +9,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.myinsta.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     // View binding object to reference UI components
@@ -20,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         // Enables edge-to-edge layout rendering for this activity
         enableEdgeToEdge()
-
 
         // Access SharedPreferences to check if user is logged in
         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
