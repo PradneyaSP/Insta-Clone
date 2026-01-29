@@ -4,8 +4,11 @@ import android.util.Log
 import com.example.myinsta.api.ApiService
 import com.example.myinsta.model.PostLikeRequest
 import com.example.myinsta.model.Post
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PostRepository (
+@Singleton
+class PostRepository @Inject constructor(
     private val apiService: ApiService,
     private val postDao: PostDao
 ) {

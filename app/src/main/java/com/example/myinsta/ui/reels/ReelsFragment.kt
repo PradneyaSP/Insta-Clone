@@ -5,26 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.myinsta.R
-import com.example.myinsta.api.RetrofitInstance
-import com.example.myinsta.data.AppDatabase
 import com.example.myinsta.data.ReelsRepository
 import com.example.myinsta.databinding.FragmentReelsBinding
-import com.example.myinsta.model.Reel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ReelsFragment: Fragment() {
 
     private var _binding: FragmentReelsBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: ReelsAdapter
-    private lateinit var reelsViewModel: ReelsViewModel
+
+    @Inject
+    lateinit var reelsRepository: ReelsRepository
+    private val reelsViewModel: ReelsViewModel by viewModels()
     private var currentPosition: Int = 0
     private var pageChangeCallback: ViewPager2.OnPageChangeCallback? = null
 
@@ -40,14 +42,7 @@ class ReelsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val api = RetrofitInstance.api
-        val reelsDao = AppDatabase.getDatabase(requireContext()).reelDao()
-        val repository: ReelsRepository = ReelsRepository(api, reelsDao)
-
-        val factory = ReelsViewModelFactory(repository)
-        reelsViewModel = ViewModelProvider(this, factory)[ReelsViewModel::class.java]
-
-        adapter = ReelsAdapter(mutableListOf(), repository, lifecycleScope, reelsViewModel) {
+        adapter = ReelsAdapter(mutableListOf(), reelsRepository, lifecycleScope, reelsViewModel) {
             ExoPlayer.Builder(requireContext()).build()
         }
 
