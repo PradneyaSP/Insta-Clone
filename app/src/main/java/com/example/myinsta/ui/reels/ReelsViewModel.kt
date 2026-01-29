@@ -11,9 +11,12 @@ import com.example.myinsta.data.PostRepository
 import com.example.myinsta.data.ReelsRepository
 import com.example.myinsta.model.Reel
 import com.example.myinsta.ui.feed.FeedViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ReelsViewModel(
+@HiltViewModel
+class ReelsViewModel @Inject constructor(
     private val repository: ReelsRepository
 ) : ViewModel() {
     private val _reels = MutableLiveData<List<Reel>>()
@@ -46,14 +49,5 @@ class ReelsViewModel(
         val updatedReels =
             currentReels.map { if (it.reelId == updatedReel.reelId) updatedReel else it }
         _reels.value = updatedReels
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class ReelsViewModelFactory(
-    private val repository: ReelsRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ReelsViewModel(repository) as T
     }
 }
